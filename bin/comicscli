@@ -1,5 +1,7 @@
 #!/usr/bin/perl
-
+#
+# Copyright 2018-2023 Ivan Guerreschi
+#
 # This file is part of ComicsPerl.
 #
 # ComicsPerl is free software: you can redistribute it and/or modify
@@ -11,44 +13,37 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-
+#
 # You should have received a copy of the GNU General Public License
 # along with Nome-Programma.  If not, see <http://www.gnu.org/licenses/>.
-#
-# Copyright 2018 Ivan Guerreschi
 
 use strict;
 use warnings;
-use diagnostics;
-
+use Cwd qw(abs_path);
+use FindBin;
+use lib abs_path("$FindBin::Bin/../lib");
 use feature "say";
 
-use Print;
-use Insert;
-use Delete;
-use RemoveBL;
-use Search;
-use Replace;
-use Sort;
+use Comics;
 
 my $menu = <<"END";
 [p] List of comics
 [i] Enter comic book
 [e] Delete comic
-[s] Search 
+[s] Search
 [r] Replace
 [o] Sort
 [q] Quit
 END
 
-my $input_opt; 
+my $input_opt;
 
 do {
    say $menu;
    chomp($input_opt = <>);
-   
+
    if (lc($input_opt) eq 'p') {
-       Print::print();
+       Comics::print();
    } elsif (lc($input_opt) eq 'i') {
        say "Enter date the comic";
        chomp(my $date = <>);
@@ -56,24 +51,25 @@ do {
        chomp(my $number = <>);
        say "Enter comic book title";
        chomp(my $title = <>);
-       Insert::insert($date, $number, $title); 
+       Comics::insert($date, $number, $title);
    } elsif (lc($input_opt) eq 'e') {
        say "Enter the comic number to be deleted";
        chomp(my $number = <>);
-       Delete::delete($number);
-       RemoveBL::remove();
+       Comics::delete($number);
+       Comics::remove();
    } elsif (lc($input_opt) eq 's') {
        say "Enter word to search";
        chomp(my $search = <>);
-       Search::search($search);
+       Comics::search($search);
    } elsif (lc($input_opt) eq 'r') {
        say "Enter word to change";
        chomp(my $old = <>);
        say "Insert new word";
        chomp(my $new = <>);
-       Replace::replace($old, $new);
+       Comics::replace($old, $new);
    } elsif (lc($input_opt) eq 'o') {
-       Sort::sort();
-   }          
-   
+       Comics::sort();
+
+   }
+
 } while lc($input_opt) ne 'q';
