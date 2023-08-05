@@ -22,11 +22,13 @@ package Comics;
 use strict;
 use warnings;
 use feature "say";
+use File::Glob ':bsd_glob';
 
-sub openFile {   
-    my $fmt_file = "fmt";   
+my $home_path = bsd_glob( "~"); 
+my $file_name = $home_path . "/.comics";   
 
-    open(my $fh, "<", $fmt_file) or die "Can't Open File : $_";
+sub openFile {
+    open(my $fh, "<", $file_name) or die "Can't Open File : $_";
 
     my @file_lines = <$fh>;
 
@@ -37,11 +39,10 @@ sub openFile {
 
 sub delete { 
     my $number = ":".shift;
-    my $fmt_file = "fmt";  
 
     my @file_lines = openFile(); 
 
-    open(my $write_fh, ">", $fmt_file) or die "Can't Open File : $_";
+    open(my $write_fh, ">", $file_name) or die "Can't Open File : $_";
 
     foreach my $line (@file_lines) { 
         print $write_fh $line unless ($line =~ /$number/);
@@ -54,9 +55,8 @@ sub insert {
     my $date = shift;
     my $number = shift;
     my $title = shift;
-    my $fmt_file = "fmt";
 
-    open my $fh, '>>', $fmt_file or die "Can't Open File : $_";
+    open my $fh, '>>', $file_name or die "Can't Open File : $_";
 
     print $fh $date, ":", $number, ":", $title;
 
@@ -73,11 +73,9 @@ sub print {
 }
 
 sub remove {
-    my $fmt_file = "fmt";
-
     my @file_lines = openFile();
 
-    open(my $write_fh, ">", $fmt_file) or die "Can't Open File : $_";
+    open(my $write_fh, ">", $file_name) or die "Can't Open File : $_";
 
     foreach my $line (@file_lines) {
 	$line =~ s/\n+/\n/g;
@@ -90,11 +88,9 @@ sub remove {
 sub replace {
     my $old = shift;
     my $new = shift;
-    my $fmt_file = "fmt";
-
     my @lines = openFile();
 
-    open(my $fh, ">", $fmt_file) or die "Can't Open File : $_";
+    open(my $fh, ">", $file_name) or die "Can't Open File : $_";
 
     foreach my $line (@lines) {
 	$line =~ s/$old/$new/g;
@@ -117,12 +113,10 @@ sub search {
 }
 
 sub sort {
-    my $fmt_file = "fmt";
-
     my @sorted = sort {(split(/\:\d+/, $a))[0] 
         cmp (split(/\:\d+/, $b))[0]} openFile();
 
-     open(my $fh, ">", $fmt_file) or die "Can't Open File : $_";   
+     open(my $fh, ">", $file_name) or die "Can't Open File : $_";   
 
      foreach my $line (@sorted) {
 	 print $fh $line;
